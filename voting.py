@@ -69,3 +69,77 @@ def condorcet_winner(games):
             return [game, pairwise_wins]
 
     return [None, pairwise_wins]
+
+def instant_runoff(games):
+    """
+    Instant Runoff Voting (IRV).
+
+    Input:
+        games = [
+            [game_name, voter1_rank, voter2_rank, ...],
+            ...
+        ]
+
+    Returns:
+        winner, rounds
+
+    where rounds is a list of dictionaries containing
+    first-place vote counts for each round.
+    """
+
+    game_names = [row[0] for row in games]
+
+    n_voters = len(games[0]) - 1
+
+    # Convert game-centric data into voter ballots
+    ballots = []
+
+    for voter in range(n_voters):
+
+        ranking = []
+
+        for row in games:
+            game = row[0]
+            rank = row[voter + 1]
+
+            ranking.append((rank, game))
+
+        ranking.sort()
+
+        ballots.append([game for rank, game in ranking])
+
+    remaining = set(game_names)
+
+    rounds = []
+
+    while len(remaining) > 1:
+
+        counts = {game: 0 for game in remaining}
+
+        # Count first active preference on each ballot
+        for ballot in ballots:
+
+            for game in ballot:
+
+                if game in remaining:
+                    counts[game] += 1
+                    break
+
+        rounds.append(counts.copy())
+
+        total_votes = sum(counts.values())
+
+        # Check for majority winner
+        for game, votes in counts.items():
+
+            if votes > total_votes / 2:
+                return game, rounds
+
+        # Eliminate lowest vote-getter
+        loser = min(counts, key=counts.get)
+
+        remaining.remove(loser)
+
+    winner = list(remaining)[0]
+
+    return winner, rounds

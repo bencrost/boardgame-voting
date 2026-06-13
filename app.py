@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from voting import borda_count, condorcet_winner
+from voting import borda_count, condorcet_winner, instant_runoff
 from sheets import load_ballots
 
 sheet_id = "1fgmyIP08aw95D-qAhIkR7GiJHhDgFtp3aGTetYNaVZQ"
@@ -25,7 +25,7 @@ st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Borda", "Condorcet"]
+    ["Borda", "Condorcet", "Instant Runoff"]
 )
 
 if voting_system == "Borda":
@@ -35,12 +35,15 @@ if voting_system == "Borda":
     )
 
 elif voting_system == "Condorcet":
-    st.info(
-        "A Condorcet winner is a game that would beat every other game "
-        "in a head-to-head vote."
+   
     )
 
 if voting_system == "Borda":
+
+    st.info(
+        "Borda count awards points based on ranking. "
+        "Games that many people rank highly tend to perform well."
+    )
 
     results = borda_count(games)
 
@@ -72,6 +75,11 @@ if voting_system == "Borda":
 
 elif voting_system == "Condorcet":
 
+     st.info(
+        "A Condorcet winner is a game that would beat every other game "
+        "in a head-to-head vote."
+        )
+
     winner, pairwise_wins = condorcet_winner(games)
 
     if winner is not None:
@@ -79,7 +87,7 @@ elif voting_system == "Condorcet":
          
     else:
         st.header("There is no Condorcet winner. This makes Nicolas de Condorcet very sad")
-        st.image("Nicolas_de_Condorcet.PNG", width=250)
+        st.image("Nicolas_de_Condorcet.PNG", width=100)
 
     table = pd.DataFrame(
         pairwise_wins.items(),
@@ -111,5 +119,38 @@ elif voting_system == "Condorcet":
     Condorcet voting tries to identify the option that would
     win a majority vote against any alternative.
     """)
+
+elif voting_system == "Instant Runoff":
+
+    winner, rounds = instant_runoff(games)
+
+    st.header(f"🏆 Instant Runoff winner: {winner}")
+
+    st.info(
+        "Instant Runoff Voting repeatedly eliminates the game with "
+        "the fewest first-place votes and transfers those votes to "
+        "the next preferred remaining game."
+    )
+
+    st.subheader("Round-by-round results")
+
+    for round_num, round_results in enumerate(rounds, start=1):
+
+        st.markdown(f"### Round {round_num}")
+
+        table = pd.DataFrame(
+            round_results.items(),
+            columns=["Game", "First-place votes"]
+        )
+
+        table = table.sort_values(
+            "First-place votes",
+            ascending=False
+        )
+
+        st.dataframe(
+            table,
+            hide_index=True
+        )
 
 st.button("Refresh Results")
