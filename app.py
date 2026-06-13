@@ -66,7 +66,7 @@ if voting_system == "Borda":
 
 elif voting_system == "Condorcet":
 
-     st.info(
+    st.info(
         "A Condorcet winner is a game that would beat every other game "
         "in a head-to-head vote."
         )
