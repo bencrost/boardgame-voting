@@ -147,7 +147,7 @@ elif voting_system == "Instant Runoff":
 elif voting_system == "Plurality":
 
     st.info(
-        "Also known as ''First Past the Post'' - this is the most boring and uninspired of all voting systems.
+        "Also known as ''First Past the Post'' - this is the most boring and uninspired of all voting systems."
         "It also opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes."
         "Nicolas de Condorcet judges you for selecting this abominable system."
         )
