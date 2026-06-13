@@ -143,3 +143,37 @@ def instant_runoff(games):
     winner = list(remaining)[0]
 
     return winner, rounds
+
+def plurality_vote(games):
+    """
+    Plurality voting.
+
+    Counts only first-place votes.
+
+    Returns:
+        winners, results
+
+    winners is a list because there may be a tie.
+    results is a sorted list: [[game_name, first_place_votes], ...]
+    """
+
+    results = []
+
+    for row in games:
+        game_name = row[0]
+        rankings = row[1:]
+
+        first_place_votes = 0
+
+        for rank in rankings:
+            if rank == 1:
+                first_place_votes += 1
+
+        results.append([game_name, first_place_votes])
+
+    results.sort(key=lambda x: x[1], reverse=True)
+
+    top_score = results[0][1]
+    winners = [game for game, score in results if score == top_score]
+
+    return winners, results

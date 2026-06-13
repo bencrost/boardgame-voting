@@ -25,7 +25,7 @@ st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Borda", "Condorcet", "Instant Runoff"]
+    ["Borda", "Condorcet", "Instant Runoff", "Plurality"]
 )
 
 
@@ -143,5 +143,49 @@ elif voting_system == "Instant Runoff":
             table,
             hide_index=True
         )
+
+elif voting_system == "Plurality":
+
+    st.info(
+        "Also known as ''First Past the Post'' - this is the most boring and uninspired of all voting systems.
+        "It also opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes."
+        "Nicolas de Condorcet judges you for selecting this abominable system."
+        )
+
+    st.image("Nicolas_de_Condorcet.PNG", width=100)
+
+    winners, results = plurality_vote(games)
+
+    if len(winners) == 1:
+        st.header(f"🏆 Plurality winner: {winners[0]}")
+    else:
+        st.header("No unique plurality winner")
+
+        tied_games = ", ".join(winners)
+
+        st.warning(
+            f"There is a tie for first place: {tied_games}. "
+            "Plurality voting cannot choose a unique winner from these ballots."
+        )
+
+    table = pd.DataFrame(
+        results,
+        columns=["Game", "First-place votes"]
+    )
+
+    table.index = range(1, len(table) + 1)
+    table.index.name = "Rank"
+
+    st.dataframe(table)
+
+    st.markdown("""
+    ### About Plurality Voting
+
+    Plurality voting counts only first-place votes. The game with the most
+    first-place votes wins.
+
+    With a small group and many games, ties are common because only a few
+    first-place votes are available.
+    """)
 
 st.button("Refresh Results")
