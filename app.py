@@ -28,15 +28,6 @@ voting_system = st.selectbox(
     ["Borda", "Condorcet", "Instant Runoff"]
 )
 
-if voting_system == "Borda":
-    st.info(
-        "Borda count awards points based on ranking. "
-        "Games that many people rank highly tend to perform well."
-    )
-
-elif voting_system == "Condorcet":
-   
-    )
 
 if voting_system == "Borda":
 
