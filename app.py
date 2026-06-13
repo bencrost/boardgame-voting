@@ -76,8 +76,10 @@ elif voting_system == "Condorcet":
 
     if winner is not None:
         st.header(f"🏆 Condorcet winner: {winner}")
+         
     else:
-        st.header("No Condorcet winner")
+        st.header("There is no Condorcet winner. This makes Nicolas de Condorcet very sad")
+        st.image("Nicolas_de_Condorcet.png", width=250)
 
     table = pd.DataFrame(
         pairwise_wins.items(),
