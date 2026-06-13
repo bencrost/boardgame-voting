@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from voting import borda_count, condorcet_winner, instant_runoff
+from voting import borda_count, condorcet_winner, instant_runoff, plurality_vote
 from sheets import load_ballots
 
 sheet_id = "1fgmyIP08aw95D-qAhIkR7GiJHhDgFtp3aGTetYNaVZQ"
@@ -149,7 +149,7 @@ elif voting_system == "Plurality":
     st.info(
         "Also known as ''First Past the Post'' - this is the most boring and uninspired of all voting systems."
         "It also opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes."
-        "Nicolas de Condorcet judges you for selecting this abominable system."
+        "People who think this is a good system should be ashamed of themselves - Nicolas de Condorcet judges you for selecting it."
         )
 
     st.image("Nicolas_de_Condorcet.PNG", width=100)
