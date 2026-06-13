@@ -95,7 +95,7 @@ elif voting_system == "Condorcet":
     st.subheader("Pairwise results")
     st.dataframe(table)
 
-     st.markdown("""
+    st.markdown("""
     ### About Condorcet Voting
 
     Every pair of games is compared head-to-head.
