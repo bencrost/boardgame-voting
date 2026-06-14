@@ -32,11 +32,11 @@ if voting_system == "Borda":
 
     Each player ranks all games from most preferred to least preferred.
 
-    Points are awarded based on position in each ranking - the lowest ranked game in a player's ranking receives 0 points, the second lowest 1 point, etc.
+    Points are awarded based on position in each ranking: the lowest-ranked game in a player's ranking receives 0 points, the second lowest 1 point, etc.
     The points are then added up across all rankings and the game with the most points wins
    
 
-    Borda count tends to favor games with broad support across the group,
+    The Borda count tends to favor games with broad support across the group,
     even if they are not everyone's first choice (think Brass Birmingham, which may not be anyone's favorite game, but most people find it unobjectionable).
     """)
 
@@ -187,7 +187,7 @@ elif voting_system == "Nanson":
     st.markdown("""
     ### About Nanson's Method
 
-    Nanson's method combines Borda count with elimination.
+    Nanson's method combines Borda count with elimination (it thus combines features of the Borda and Instant Runoff systems).
 
     In each round, games receive Borda scores based only on the games still
     remaining. Any game with a below-average Borda score is eliminated.
