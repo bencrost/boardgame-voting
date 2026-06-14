@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from voting import borda_count, condorcet_winner, instant_runoff, plurality_vote
+from voting import borda_count, condorcet_winner, copeland, plurality_vote
 from sheets import load_ballots
 
 sheet_id = "1fgmyIP08aw95D-qAhIkR7GiJHhDgFtp3aGTetYNaVZQ"
