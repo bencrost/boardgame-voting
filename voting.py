@@ -177,3 +177,71 @@ def plurality_vote(games):
     winners = [game for game, score in results if score == top_score]
 
     return winners, results
+
+def copeland(games):
+    """
+    Copeland voting method.
+
+    Score:
+        +1 for each head-to-head win
+         0 for each tie
+        -1 for each loss
+
+    Returns:
+
+        results = [
+            [game_name, copeland_score],
+            ...
+        ]
+
+    sorted from highest to lowest score.
+    """
+
+    game_names = [row[0] for row in games]
+
+    rankings = {
+        row[0]: row[1:]
+        for row in games
+    }
+
+    results = []
+
+    for game_a in game_names:
+
+        score = 0
+
+        for game_b in game_names:
+
+            if game_a == game_b:
+                continue
+
+            votes_for_a = 0
+            votes_for_b = 0
+
+            for rank_a, rank_b in zip(
+                rankings[game_a],
+                rankings[game_b]
+            ):
+
+                if rank_a < rank_b:
+                    votes_for_a += 1
+
+                elif rank_b < rank_a:
+                    votes_for_b += 1
+
+            if votes_for_a > votes_for_b:
+                score += 1
+
+            elif votes_for_b > votes_for_a:
+                score -= 1
+
+            # ties contribute 0
+
+        results.append([game_a, score])
+
+    results.sort(
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    return results

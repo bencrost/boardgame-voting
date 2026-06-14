@@ -25,7 +25,7 @@ st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Borda", "Condorcet", "Instant Runoff", "Plurality"]
+    ["Borda", "Condorcet", "Copeland", "Plurality"]
 )
 
 
@@ -185,5 +185,21 @@ elif voting_system == "Plurality":
     With a small group and many games, ties are common because only a few
     first-place votes are available.
     """)
+
+elif voting_system=="Copeland":
+    results = copeland(games)
+
+    winner = results[0][0]
+
+    st.header(f"🏆 Copeland winner: {winner}")
+
+    table = pd.DataFrame(
+        results,
+        columns=["Game", "Copeland Score"]
+        )
+
+    table.index = range(1, len(table) + 1)
+    table.index.name = "Rank"
+    st.dataframe(table)
 
 st.button("Refresh Results")
