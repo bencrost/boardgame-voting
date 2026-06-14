@@ -7,4 +7,9 @@ def load_ballots(sheet_id):
         f"{sheet_id}/export?format=csv"
     )
 
-    return pd.read_csv(url)
+    df = pd.read_csv(url)
+
+    # Drop second column (index 1)
+    df = df.drop(df.columns[1], axis=1)
+
+    return df
