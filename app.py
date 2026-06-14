@@ -21,10 +21,18 @@ voting_system = st.selectbox(
 
 if voting_system == "Borda":
 
-    st.info(
-        "Borda count awards points based on ranking. "
-        "Games that many people rank highly tend to perform well."
-    )
+    st.markdown("""
+    ### About Borda Count
+
+    Each player ranks all games from most preferred to least preferred.
+
+    Points are awarded based on position in each ranking - the lowest ranked game in a player's ranking receives 0 points, the second lowest 1 point, etc.
+    The points are then added up across all rankings and the game with the most points wins
+   
+
+    Borda count tends to favor games with broad support across the group,
+    even if they are not everyone's first choice (think Brass Birmingham, which may not be anyone's favorite game, but most people find it unobjectionable).
+    """)
 
     results = borda_count(games)
 
@@ -42,24 +50,20 @@ if voting_system == "Borda":
 
     st.dataframe(table)
 
-    st.markdown("""
-    ### About Borda Count
-
-    Each player ranks all games from most preferred (1) to least preferred.
-
-    Points are awarded based on position in each ranking. A game receives
-    more points when it is ranked highly by many players.
-
-    Borda count tends to favor games with broad support across the group,
-    even if they are not everyone's first choice.
-    """)
+    
 
 elif voting_system == "Condorcet":
 
-    st.info(
-        "A Condorcet winner is a game that would beat every other game "
-        "in a head-to-head vote."
-        )
+    st.markdown("""
+    ### About Condorcet Voting
+
+    Every pair of games is compared head-to-head. If more voters prefer Game A to Game B than vice versa,
+    then Game A wins that matchup.
+
+    A Condorcet winner is a game that beats every other game
+    in these head-to-head comparisons. The Condorcet winner is always a popular choice as there is a majority of voters that prefers it to any other game.
+    Unfortunately, there is often no Condorcet winner in practice.
+    """)
 
     winner, pairwise_wins = condorcet_winner(games)
 
@@ -86,20 +90,7 @@ elif voting_system == "Condorcet":
     st.subheader("Pairwise results")
     st.dataframe(table)
 
-    st.markdown("""
-    ### About Condorcet Voting
-
-    Every pair of games is compared head-to-head.
-
-    If more players prefer Game A to Game B than vice versa,
-    then Game A wins that matchup.
-
-    A Condorcet winner is a game that beats every other game
-    in these head-to-head comparisons.
-
-    Condorcet voting tries to identify the option that would
-    win a majority vote against any alternative.
-    """)
+    
 
 elif voting_system == "Instant Runoff":
 
