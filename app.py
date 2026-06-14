@@ -10,22 +10,12 @@ df = load_ballots(sheet_id)
 
 games = df.values.tolist()
 
-results = borda_count(games)
-
-winner, pairwise_wins = condorcet_winner(games)
-
-if winner is not None:
-    print(f"The Condorcet winner is: {winner}")
-else:
-    print("There is no Condorcet winner.")
-
-print(pairwise_wins)
 
 st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Borda", "Condorcet", "Copeland", "Plurality"]
+    ["Condorcet", "Copeland","Borda", "Plurality"]
 )
 
 
