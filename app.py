@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from voting import borda_count, condorcet_winner, nanson, plurality_vote
+from voting import borda_count, condorcet_winner, nanson, baldwin, plurality_vote
 from sheets import load_ballots
 
 sheet_id = "1fgmyIP08aw95D-qAhIkR7GiJHhDgFtp3aGTetYNaVZQ"
@@ -15,11 +15,17 @@ st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Borda", "Condorcet", "Nanson", "Plurality"]
+    ["Borda", "Condorcet", "Nanson", "Baldwin", "Plurality"]
 )
 
 
 if voting_system == "Borda":
+
+    results = borda_count(games)
+
+    winner = results[0][0]
+
+    st.header(f"🏆 Borda winner: {winner}")
 
     st.markdown("""
     ### About Borda Count
@@ -33,12 +39,6 @@ if voting_system == "Borda":
     Borda count tends to favor games with broad support across the group,
     even if they are not everyone's first choice (think Brass Birmingham, which may not be anyone's favorite game, but most people find it unobjectionable).
     """)
-
-    results = borda_count(games)
-
-    winner = results[0][0]
-
-    st.header(f"🏆 Borda winner: {winner}")
 
     table = pd.DataFrame(
         results,
@@ -54,6 +54,15 @@ if voting_system == "Borda":
 
 elif voting_system == "Condorcet":
 
+    winner, pairwise_wins = condorcet_winner(games)
+
+    if winner is not None:
+        st.header(f"🏆 Condorcet winner: {winner}")
+         
+    else:
+        st.header("There is no Condorcet winner. This makes Nicolas de Condorcet very sad")
+        st.image("Nicolas_de_Condorcet.PNG", width=100)
+
     st.markdown("""
     ### About Condorcet Voting
 
@@ -67,15 +76,6 @@ elif voting_system == "Condorcet":
     In those cases, an obvious solution is to choose the game that won the most head-to-head matchups (this is called the Copeland system).
     If there's still a tie, people often use the Borda count as the tie-breaker.
     """)
-
-    winner, pairwise_wins = condorcet_winner(games)
-
-    if winner is not None:
-        st.header(f"🏆 Condorcet winner: {winner}")
-         
-    else:
-        st.header("There is no Condorcet winner. This makes Nicolas de Condorcet very sad")
-        st.image("Nicolas_de_Condorcet.PNG", width=100)
 
     table = pd.DataFrame(
         pairwise_wins.items(),
@@ -170,21 +170,6 @@ elif voting_system == "Plurality":
     first-place votes are available.
     """)
 
-elif voting_system=="Copeland":
-    results = copeland(games)
-
-    winner = results[0][0]
-
-    st.header(f"🏆 Copeland winner: {winner}")
-
-    table = pd.DataFrame(
-        results,
-        columns=["Game", "Copeland Score"]
-        )
-
-    table.index = range(1, len(table) + 1)
-    table.index.name = "Rank"
-    st.dataframe(table)
 
 elif voting_system == "Nanson":
 
@@ -193,7 +178,7 @@ elif voting_system == "Nanson":
     if len(winners) == 1:
         st.header(f"🏆 Nanson winner: {winners[0]}")
     else:
-        st.header("No unique Nanson winner")
+        st.header("There is no unique Nanson winner")
         st.warning(
             "Nanson's method ended in a tie among: "
             + ", ".join(winners)
@@ -235,6 +220,52 @@ elif voting_system == "Nanson":
 
         st.dataframe(table, hide_index=True)
 
+elif voting_system == "Baldwin":
+
+    winners, rounds = baldwin(games)
+
+    if len(winners) == 1:
+        st.header(f"🏆 Baldwin winner: {winners[0]}")
+    else:
+        st.header("No unique Baldwin winner")
+        st.warning(
+            "The Baldwin method ended in a tie among: "
+            + ", ".join(winners)
+        )
+
+    st.markdown("""
+    ### About the Baldwin Method
+
+    The Baldwin method combines Borda count with sequential elimination.
+
+    In each round, games receive Borda scores based only on the games still
+    remaining. The game with the lowest Borda score is eliminated.
+
+    The process repeats until one game remains.
+
+    It is similar to Nanson's method, but more gradual: Nanson can eliminate
+    several below-average games in one round, while Baldwin eliminates only
+    one game at a time.
+    """)
+    
+    st.subheader("Round-by-round results")
+
+    for round_num, round_info in enumerate(rounds, start=1):
+
+        st.markdown(f"### Round {round_num}")
+
+        table = pd.DataFrame(
+            round_info["scores"],
+            columns=["Game", "Borda Score"]
+        )
+
+        table["Eliminated"] = table["Game"].isin(
+            round_info["eliminated"]
+        )
+
+        st.dataframe(table, hide_index=True)
+
+    
     
 
 st.button("Refresh Results")

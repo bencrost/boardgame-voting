@@ -316,3 +316,69 @@ def nanson(games):
             remaining.remove(game)
 
     return remaining, rounds
+
+def baldwin(games):
+    """
+    Baldwin method.
+
+    Repeatedly:
+      1. Computes Borda scores among remaining games.
+      2. Eliminates the single game with the lowest Borda score.
+      3. Repeats until one game remains.
+
+    Returns:
+        winners, rounds
+
+    winners is a list because ties are possible.
+    """
+
+    remaining = [row[0] for row in games]
+    rankings = {row[0]: row[1:] for row in games}
+
+    rounds = []
+
+    while len(remaining) > 1:
+
+        n_remaining = len(remaining)
+        scores = []
+
+        for game in remaining:
+
+            score = 0
+
+            for voter_rankings in zip(*[rankings[g] for g in remaining]):
+
+                ordered_games = sorted(
+                    zip(voter_rankings, remaining)
+                )
+
+                revised_rank = [
+                    g for original_rank, g in ordered_games
+                ].index(game) + 1
+
+                score += n_remaining - revised_rank
+
+            scores.append([game, score])
+
+        scores.sort(key=lambda x: x[1], reverse=True)
+
+        lowest_score = scores[-1][1]
+
+        lowest_games = [
+            game
+            for game, score in scores
+            if score == lowest_score
+        ]
+
+        rounds.append({
+            "scores": scores,
+            "eliminated": lowest_games
+        })
+
+        # If there is a tie for last, stop rather than eliminate randomly
+        if len(lowest_games) > 1:
+            return lowest_games, rounds
+
+        remaining.remove(lowest_games[0])
+
+    return remaining, rounds
