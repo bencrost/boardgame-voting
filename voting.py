@@ -245,3 +245,74 @@ def copeland(games):
     )
 
     return results
+
+def nanson(games):
+    """
+    Nanson's method.
+
+    Repeatedly:
+      1. Computes Borda scores among remaining games.
+      2. Eliminates all games below the average Borda score.
+      3. Repeats until one game remains.
+
+    Returns:
+        winners, rounds
+
+    winners is a list because ties are possible.
+    """
+
+    remaining = [row[0] for row in games]
+    rankings = {row[0]: row[1:] for row in games}
+
+    rounds = []
+
+    while len(remaining) > 1:
+
+        n_remaining = len(remaining)
+        scores = []
+
+        for game in remaining:
+
+            score = 0
+
+            for voter_rankings in zip(
+                *[rankings[g] for g in remaining]
+            ):
+                # voter_rankings gives the original ranks of remaining games
+                ordered_games = sorted(
+                    zip(voter_rankings, remaining)
+                )
+
+                revised_rank = [
+                    g for original_rank, g in ordered_games
+                ].index(game) + 1
+
+                score += n_remaining - revised_rank
+
+            scores.append([game, score])
+
+        average_score = sum(score for game, score in scores) / len(scores)
+
+        eliminated = [
+            game
+            for game, score in scores
+            if score < average_score
+        ]
+
+        scores.sort(key=lambda x: x[1], reverse=True)
+
+        rounds.append({
+            "scores": scores,
+            "average_score": average_score,
+            "eliminated": eliminated
+        })
+
+        # Safety check: if nobody is below average, stop and declare tie
+        if len(eliminated) == 0:
+            winners = [game for game, score in scores]
+            return winners, rounds
+
+        for game in eliminated:
+            remaining.remove(game)
+
+    return remaining, rounds

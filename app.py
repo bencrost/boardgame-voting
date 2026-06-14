@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from voting import borda_count, condorcet_winner, copeland, plurality_vote
+from voting import borda_count, condorcet_winner, nanson, plurality_vote
 from sheets import load_ballots
 
 sheet_id = "1fgmyIP08aw95D-qAhIkR7GiJHhDgFtp3aGTetYNaVZQ"
@@ -15,7 +15,7 @@ st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Condorcet","Borda", "Plurality"]
+    ["Borda", "Condorcet", "Nanson", "Plurality"]
 )
 
 
@@ -185,5 +185,56 @@ elif voting_system=="Copeland":
     table.index = range(1, len(table) + 1)
     table.index.name = "Rank"
     st.dataframe(table)
+
+elif voting_system == "Nanson":
+
+    winners, rounds = nanson(games)
+
+    if len(winners) == 1:
+        st.header(f"🏆 Nanson winner: {winners[0]}")
+    else:
+        st.header("No unique Nanson winner")
+        st.warning(
+            "Nanson's method ended in a tie among: "
+            + ", ".join(winners)
+        )
+
+    st.markdown("""
+    ### About Nanson's Method
+
+    Nanson's method combines Borda count with elimination.
+
+    In each round, games receive Borda scores based only on the games still
+    remaining. Any game with a below-average Borda score is eliminated.
+
+    The process repeats until one game remains.
+
+    Unlike ordinary Borda count, Nanson's method will select the Condorcet
+    winner whenever one exists.
+    """)
+
+    st.subheader("Round-by-round results")
+
+    for round_num, round_info in enumerate(rounds, start=1):
+
+        st.markdown(f"### Round {round_num}")
+
+        st.write(
+            f"Average Borda score: "
+            f"{round_info['average_score']:.2f}"
+        )
+
+        table = pd.DataFrame(
+            round_info["scores"],
+            columns=["Game", "Borda Score"]
+        )
+
+        table["Eliminated"] = table["Game"].isin(
+            round_info["eliminated"]
+        )
+
+        st.dataframe(table, hide_index=True)
+
+    
 
 st.button("Refresh Results")
