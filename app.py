@@ -15,7 +15,7 @@ st.title("Board Game Voting")
 
 voting_system = st.selectbox(
     "Voting system",
-    ["Condorcet", "Copeland","Borda", "Plurality"]
+    ["Condorcet","Borda", "Plurality"]
 )
 
 
@@ -62,7 +62,10 @@ elif voting_system == "Condorcet":
 
     A Condorcet winner is a game that beats every other game
     in these head-to-head comparisons. The Condorcet winner is always a popular choice as there is a majority of voters that prefers it to any other game.
+
     Unfortunately, there is often no Condorcet winner in practice.
+    In those cases, an obvious solution is to choose the game that won the most head-to-head matchups (this is called the Copeland system).
+    If there's still a tie, people often use the Borda count as the tie-breaker.
     """)
 
     winner, pairwise_wins = condorcet_winner(games)
@@ -128,7 +131,7 @@ elif voting_system == "Instant Runoff":
 elif voting_system == "Plurality":
 
     st.info(
-        "Also known as ''First Past the Post,'' this is the most boring and uninspired of all voting systems. It opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes. People who think this is a good system should be ashamed of themselves - Nicolas de Condorcet judges you for even considering it."
+        "Also known as first-past-the-post, this is the most boring and uninspired of all voting systems. It opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes. People who think this is a good system should be ashamed of themselves - Nicolas de Condorcet judges you for even considering it."
         )
 
     st.image("Nicolas_de_Condorcet.PNG", width=100)
