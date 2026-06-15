@@ -130,9 +130,14 @@ elif voting_system == "Instant Runoff":
 
 elif voting_system == "Plurality":
 
-    st.info(
-        "Also known as first-past-the-post, this is the most boring and uninspired of all voting systems. It opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes. People who think this is a good system should be ashamed of themselves - Nicolas de Condorcet judges you for even considering it."
-        )
+    st.markdown("""
+    ### About Plurality Voting
+
+    Plurality voting counts only first-place votes. The game with the most
+    first-place votes wins.
+
+    "Also known as first-past-the-post, this is the most boring and uninspired of all voting systems. It opens the door to all kinds of strategic voting shenanigans and generates outcomes that nobody likes. People who think this is a good system should be ashamed of themselves - Nicolas de Condorcet judges you for even considering it."
+    """)
 
     st.image("Nicolas_de_Condorcet.PNG", width=100)
 
@@ -160,15 +165,7 @@ elif voting_system == "Plurality":
 
     st.dataframe(table)
 
-    st.markdown("""
-    ### About Plurality Voting
-
-    Plurality voting counts only first-place votes. The game with the most
-    first-place votes wins.
-
-    With a small group and many games, ties are common because only a few
-    first-place votes are available.
-    """)
+    
 
 
 elif voting_system == "Nanson":
