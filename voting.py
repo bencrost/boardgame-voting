@@ -375,10 +375,6 @@ def baldwin(games):
             "eliminated": lowest_games
         })
 
-        # If there is a tie for last, stop rather than eliminate randomly
-        if len(lowest_games) > 1:
-            return lowest_games, rounds
-
         remaining.remove(lowest_games[0])
 
     return remaining, rounds
