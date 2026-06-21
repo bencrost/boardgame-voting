@@ -321,15 +321,10 @@ def baldwin(games):
     """
     Baldwin method.
 
-    Repeatedly:
-      1. Computes Borda scores among remaining games.
-      2. Eliminates the single game with the lowest Borda score.
-      3. Repeats until one game remains.
+    Repeatedly computes Borda scores among remaining games
+    and eliminates the game with the lowest score.
 
-    Returns:
-        winners, rounds
-
-    winners is a list because ties are possible.
+    If the final round is tied, returns all tied finalists.
     """
 
     remaining = [row[0] for row in games]
@@ -348,9 +343,7 @@ def baldwin(games):
 
             for voter_rankings in zip(*[rankings[g] for g in remaining]):
 
-                ordered_games = sorted(
-                    zip(voter_rankings, remaining)
-                )
+                ordered_games = sorted(zip(voter_rankings, remaining))
 
                 revised_rank = [
                     g for original_rank, g in ordered_games
@@ -362,7 +355,14 @@ def baldwin(games):
 
         scores.sort(key=lambda x: x[1], reverse=True)
 
+        highest_score = scores[0][1]
         lowest_score = scores[-1][1]
+
+        top_games = [
+            game
+            for game, score in scores
+            if score == highest_score
+        ]
 
         lowest_games = [
             game
@@ -374,6 +374,18 @@ def baldwin(games):
             "scores": scores,
             "eliminated": lowest_games
         })
+
+        # If all remaining games are tied, stop and declare a tie
+        if highest_score == lowest_score:
+            return top_games, rounds
+
+        # If the final two are tied, stop and declare both winners
+        if len(remaining) == 2 and len(top_games) == 2:
+            return top_games, rounds
+
+        # If there is a tie for last, stop rather than eliminate randomly
+        if len(lowest_games) > 1:
+            return lowest_games, rounds
 
         remaining.remove(lowest_games[0])
 
