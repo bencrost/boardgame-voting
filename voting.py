@@ -375,18 +375,13 @@ def baldwin(games):
             "eliminated": lowest_games
         })
 
-        # If all remaining games are tied, stop and declare a tie
-        if highest_score == lowest_score:
-            return top_games, rounds
+        
 
         # If the final two are tied, stop and declare both winners
         if len(remaining) == 2 and len(top_games) == 2:
             return top_games, rounds
 
-        # If there is a tie for last, stop rather than eliminate randomly
-        if len(lowest_games) > 1:
-            return lowest_games, rounds
-
+        
         remaining.remove(lowest_games[0])
 
     return remaining, rounds
